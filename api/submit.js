@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
-          'Name': {
+          'Nome': {
             title: [{ text: { content: nome || 'Lead sem nome' } }]
           }
         },
