@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   const {
     nome, idade, whatsapp, renda, fatura_digital,
-    modelo_negocio, objetivo, desafio
+    modelo_negocio, objetivo, desafio, como_descobriu
   } = req.body;
 
   try {
@@ -42,6 +42,9 @@ export default async function handler(req, res) {
           },
           'Maior Desafio': {
             rich_text: [{ text: { content: desafio || '' } }]
+          },
+          'Como Descobriu': {
+            rich_text: [{ text: { content: como_descobriu || '' } }]
           },
           'Status': {
             rich_text: [{ text: { content: 'Novo Lead' } }]

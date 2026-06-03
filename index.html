@@ -300,6 +300,20 @@
           <textarea id="desafio" placeholder="O que te trava? O que você já tentou e não funcionou?" required></textarea>
         </div>
 
+        <div class="form-group">
+          <label>Como você me descobriu? <span>*</span></label>
+          <select id="como_descobriu" required>
+            <option value="" disabled selected>Selecione</option>
+            <option>Instagram</option>
+            <option>YouTube</option>
+            <option>TikTok</option>
+            <option>Canal 3h30 Club (WhatsApp)</option>
+            <option>Indicação de um amigo</option>
+            <option>Google</option>
+            <option>Outro</option>
+          </select>
+        </div>
+
         <button class="btn-submit" onclick="enviarFormulario()">
           Enviar minha aplicação →
         </button>
@@ -327,8 +341,9 @@
       const modelo_negocio = document.getElementById('modelo_negocio').value.trim();
       const objetivo = document.getElementById('objetivo').value.trim();
       const desafio = document.getElementById('desafio').value.trim();
+      const como_descobriu = document.getElementById('como_descobriu').value;
 
-      if (!nome || !idade || !whatsapp || !renda || !fatura_digital || !objetivo || !desafio) {
+      if (!nome || !idade || !whatsapp || !renda || !fatura_digital || !objetivo || !desafio || !como_descobriu) {
         alert('Preencha todos os campos obrigatórios (*)');
         return;
       }
@@ -341,7 +356,7 @@
         const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, idade, whatsapp, renda, fatura_digital, modelo_negocio, objetivo, desafio })
+          body: JSON.stringify({ nome, idade, whatsapp, renda, fatura_digital, modelo_negocio, objetivo, desafio, como_descobriu })
         });
 
         if (res.ok) {
