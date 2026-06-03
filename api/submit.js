@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   const {
-    nome, idade, whatsapp, renda, fatura_digital,
+    nome, idade, email, instagram, whatsapp, renda, fatura_digital,
     modelo_negocio, objetivo, desafio, como_descobriu
   } = req.body;
 
@@ -43,6 +43,20 @@ export default async function handler(req, res) {
             type: 'bulleted_list_item',
             bulleted_list_item: {
               rich_text: [{ text: { content: `🎂 Idade: ${idade}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `📧 Email: ${email}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `📸 Instagram: ${instagram || 'Não informado'}` } }]
             }
           },
           {

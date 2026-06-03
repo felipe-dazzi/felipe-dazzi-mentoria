@@ -251,8 +251,34 @@
         </div>
 
         <div class="form-group">
+          <label>E-mail <span>*</span></label>
+          <input type="email" id="email" placeholder="seu@email.com" required />
+        </div>
+
+        <div class="form-group">
+          <label>Instagram</label>
+          <input type="text" id="instagram" placeholder="@seuinstagram" />
+        </div>
+
+        <div class="form-group">
           <label>WhatsApp <span>*</span></label>
-          <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" required />
+          <div style="display:flex; gap:8px;">
+            <select id="ddi" style="width:110px; flex-shrink:0;">
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+351">🇵🇹 +351</option>
+              <option value="+244">🇦🇴 +244</option>
+              <option value="+258">🇲🇿 +258</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+52">🇲🇽 +52</option>
+            </select>
+            <input type="tel" id="whatsapp" placeholder="(11) 99999-9999" required style="flex:1;" />
+          </div>
         </div>
 
         <div class="form-group">
@@ -335,7 +361,10 @@
     async function enviarFormulario() {
       const nome = document.getElementById('nome').value.trim();
       const idade = document.getElementById('idade').value.trim();
-      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const instagram = document.getElementById('instagram').value.trim();
+      const ddi = document.getElementById('ddi').value;
+      const whatsapp = ddi + ' ' + document.getElementById('whatsapp').value.trim();
       const renda = document.getElementById('renda').value;
       const fatura_digital = document.getElementById('fatura_digital').value;
       const modelo_negocio = document.getElementById('modelo_negocio').value.trim();
@@ -343,7 +372,7 @@
       const desafio = document.getElementById('desafio').value.trim();
       const como_descobriu = document.getElementById('como_descobriu').value;
 
-      if (!nome || !idade || !whatsapp || !renda || !fatura_digital || !objetivo || !desafio || !como_descobriu) {
+      if (!nome || !idade || !email || !whatsapp || !renda || !fatura_digital || !objetivo || !desafio || !como_descobriu) {
         alert('Preencha todos os campos obrigatórios (*)');
         return;
       }
@@ -356,7 +385,7 @@
         const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, idade, whatsapp, renda, fatura_digital, modelo_negocio, objetivo, desafio, como_descobriu })
+          body: JSON.stringify({ nome, idade, email, instagram, whatsapp, renda, fatura_digital, modelo_negocio, objetivo, desafio, como_descobriu })
         });
 
         if (res.ok) {
