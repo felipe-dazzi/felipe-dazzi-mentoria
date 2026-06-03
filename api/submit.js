@@ -19,44 +19,103 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
-          'Nome': {
-            title: [{ text: { content: nome || '' } }]
-          },
-          'Idade': {
-            rich_text: [{ text: { content: idade || '' } }]
-          },
-          'WhatsApp': {
-            rich_text: [{ text: { content: whatsapp || '' } }]
-          },
-          'Renda Mensal': {
-            rich_text: [{ text: { content: renda || '' } }]
-          },
-          'Fatura no Digital': {
-            rich_text: [{ text: { content: fatura_digital || '' } }]
-          },
-          'Modelo de Negócio': {
-            rich_text: [{ text: { content: modelo_negocio || '' } }]
-          },
-          'Objetivo': {
-            rich_text: [{ text: { content: objetivo || '' } }]
-          },
-          'Maior Desafio': {
-            rich_text: [{ text: { content: desafio || '' } }]
-          },
-          'Como Descobriu': {
-            rich_text: [{ text: { content: como_descobriu || '' } }]
-          },
-          'Status': {
-            rich_text: [{ text: { content: 'Novo Lead' } }]
+          'Name': {
+            title: [{ text: { content: nome || 'Lead sem nome' } }]
           }
-        }
+        },
+        children: [
+          {
+            object: 'block',
+            type: 'heading_2',
+            heading_2: {
+              rich_text: [{ text: { content: `📋 Aplicação de ${nome}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `👤 Nome: ${nome}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `🎂 Idade: ${idade}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `📱 WhatsApp: ${whatsapp}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `💰 Renda Mensal: ${renda}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `💻 Fatura no Digital: ${fatura_digital}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `🏢 Modelo de Negócio: ${modelo_negocio || 'Não informado'}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'bulleted_list_item',
+            bulleted_list_item: {
+              rich_text: [{ text: { content: `📣 Como me descobriu: ${como_descobriu}` } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'heading_3',
+            heading_3: {
+              rich_text: [{ text: { content: '🎯 Objetivo com a Mentoria' } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'paragraph',
+            paragraph: {
+              rich_text: [{ text: { content: objetivo } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'heading_3',
+            heading_3: {
+              rich_text: [{ text: { content: '⚡ Maior Desafio Hoje' } }]
+            }
+          },
+          {
+            object: 'block',
+            type: 'paragraph',
+            paragraph: {
+              rich_text: [{ text: { content: desafio } }]
+            }
+          }
+        ]
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Notion error:', data);
+      console.error('Notion error:', JSON.stringify(data));
       return res.status(500).json({ error: 'Erro ao salvar no Notion', details: data });
     }
 
