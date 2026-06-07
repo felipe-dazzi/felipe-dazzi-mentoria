@@ -5,10 +5,16 @@ export default async function handler(req, res) {
 
   const {
     nome, idade, email, instagram, whatsapp, renda, fatura_digital,
-    modelo_negocio, objetivo, desafio, como_descobriu
+    modelo_negocio, como_descobriu, objetivo, desafio
   } = req.body;
 
+  if (!nome || !idade || !email || !whatsapp || !renda || !fatura_digital || !como_descobriu || !objetivo || !desafio) {
+    return res.status(400).json({ error: 'Campos obrigatórios faltando' });
+  }
+
   try {
+    const today = new Date().toISOString().split('T')[0];
+
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: {
@@ -20,117 +26,80 @@ export default async function handler(req, res) {
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
           'Nome': {
-            title: [{ text: { content: nome || 'Lead sem nome' } }]
+            title: [{ text: { content: nome || '' } }]
+          },
+          'Idade': {
+            number: parseInt(idade) || 0
+          },
+          'Email': {
+            email: email || ''
+          },
+          'Instagram': {
+            rich_text: [{ text: { content: instagram || '' } }]
+          },
+          'WhatsApp': {
+            phone_number: whatsapp || ''
+          },
+          'Renda Mensal': {
+            select: { name: renda || '' }
+          },
+          'Fatura Digital': {
+            select: { name: fatura_digital || '' }
+          },
+          'Modelo de Negócio': {
+            rich_text: [{ text: { content: modelo_negocio || '' } }]
+          },
+          'Objetivo': {
+            rich_text: [{ text: { content: objetivo || '' } }]
+          },
+          'Maior Desafio': {
+            rich_text: [{ text: { content: desafio || '' } }]
+          },
+          'Como Descobriu': {
+            select: { name: como_descobriu || '' }
+          },
+          'Status': {
+            select: { name: 'Novo' }
+          },
+          'Data': {
+            date: { start: today }
+          },
+          'Formulário': {
+            rich_text: [{ text: { content: 'Mentoria Individual' } }]
           }
-        },
-        children: [
-          {
-            object: 'block',
-            type: 'heading_2',
-            heading_2: {
-              rich_text: [{ text: { content: `📋 Aplicação de ${nome}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `👤 Nome: ${nome}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `🎂 Idade: ${idade}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `📧 Email: ${email}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `📸 Instagram: ${instagram || 'Não informado'}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `📱 WhatsApp: ${whatsapp}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `💰 Renda Mensal: ${renda}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `💻 Fatura no Digital: ${fatura_digital}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `🏢 Modelo de Negócio: ${modelo_negocio || 'Não informado'}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'bulleted_list_item',
-            bulleted_list_item: {
-              rich_text: [{ text: { content: `📣 Como me descobriu: ${como_descobriu}` } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'heading_3',
-            heading_3: {
-              rich_text: [{ text: { content: '🎯 Objetivo com a Mentoria' } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'paragraph',
-            paragraph: {
-              rich_text: [{ text: { content: objetivo } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'heading_3',
-            heading_3: {
-              rich_text: [{ text: { content: '⚡ Maior Desafio Hoje' } }]
-            }
-          },
-          {
-            object: 'block',
-            type: 'paragraph',
-            paragraph: {
-              rich_text: [{ text: { content: desafio } }]
-            }
-          }
-        ]
+        }
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Notion error:', JSON.stringify(data));
+      console.error('Notion error:', data);
       return res.status(500).json({ error: 'Erro ao salvar no Notion', details: data });
+    }
+
+    // Envia notificação no WhatsApp do Felipe
+    const waBody = {
+      number: '5512992051066',
+      options: { delay: 1000, presence: 'composing' },
+      text: `🔔 *Novo Lead - Mentoria Individual*\n\n*Nome:* ${nome}\n*Idade:* ${idade}\n*WhatsApp:* ${whatsapp}\n*Email:* ${email}\n*Renda:* ${renda}\n*Fatura Digital:* ${fatura_digital}\n*Como descobriu:* ${como_descobriu}\n\n*Objetivo:* ${objetivo.substring(0, 150)}${objetivo.length > 150 ? '...' : ''}\n*Desafio:* ${desafio.substring(0, 150)}${desafio.length > 150 ? '...' : ''}`
+    };
+
+    try {
+      await fetch(
+        `https://felipe-evolution-api.gno9t9.easypanel.host/message/sendText/${process.env.EVOLUTION_INSTANCE}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': process.env.EVOLUTION_API_KEY
+          },
+          body: JSON.stringify(waBody)
+        }
+      );
+    } catch (waError) {
+      console.error('WhatsApp notify error:', waError);
+      // não quebra o fluxo se o zap falhar
     }
 
     return res.status(200).json({ success: true });
