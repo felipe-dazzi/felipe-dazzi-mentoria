@@ -69,8 +69,11 @@ export default async function handler(req, res) {
           body: JSON.stringify(waBody)
         }
       );
+      const waResBody = await waRes.text();
       if (!waRes.ok) {
-        console.error('WhatsApp notify failed:', waRes.status, await waRes.text());
+        console.error('WhatsApp notify failed:', waRes.status, waResBody);
+      } else {
+        console.log('WhatsApp notify sent:', waRes.status, waResBody);
       }
     } catch (waError) {
       console.error('WhatsApp notify error:', waError);
