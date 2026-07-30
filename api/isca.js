@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         'Notion-Version': '2022-06-28'
       },
       body: JSON.stringify({
-        parent: { database_id: process.env.NOTION_DB_ID },
+        parent: { database_id: process.env.NOTION_ISCA_DB_ID },
         properties: {
           'Nome': {
             title: [{ text: { content: nome || '' } }]
