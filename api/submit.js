@@ -78,7 +78,7 @@ export default async function handler(req, res) {
     };
 
     try {
-      await fetch(
+      const waRes = await fetch(
         `https://felipe-evolution-api.gno9t9.easypanel.host/message/sendText/${process.env.EVOLUTION_INSTANCE}`,
         {
           method: 'POST',
@@ -89,6 +89,9 @@ export default async function handler(req, res) {
           body: JSON.stringify(waBody)
         }
       );
+      if (!waRes.ok) {
+        console.error('WhatsApp notify failed:', waRes.status, await waRes.text());
+      }
     } catch (waError) {
       console.error('WhatsApp notify error:', waError);
       // não quebra o fluxo se o zap falhar
